@@ -33,6 +33,7 @@ def clean_data(dataframe_to_clean, filename=""):
         dataframe['S1 seconds'] = [str(dataframe.iloc[i, 6]).split(':')[
             1] for i in range(len(dataframe))]
         dataframe['S1 seconds'] = pd.to_numeric(dataframe['S1 seconds'])
+        dataframe['S1_TOTAL'] = dataframe['S1 minutes']*60 + dataframe['S1 seconds']
         print("S1                          : FIXED")
 
         dataframe[' S2'] = dataframe[' S2'].fillna("00:00.00")
@@ -45,6 +46,7 @@ def clean_data(dataframe_to_clean, filename=""):
         dataframe['S2 seconds'] = [str(dataframe.iloc[i, 8]).split(':')[
             1] for i in range(len(dataframe))]
         dataframe['S2 seconds'] = pd.to_numeric(dataframe['S2 seconds'])
+        dataframe['S2_TOTAL'] = dataframe['S2 minutes']*60 + dataframe['S2 seconds']
         print("S2                          : FIXED")
 
         dataframe[' S3'] = dataframe[' S3'].fillna("00:00.00")
@@ -57,9 +59,10 @@ def clean_data(dataframe_to_clean, filename=""):
         dataframe['S3 seconds'] = [str(dataframe.iloc[i, 10]).split(':')[
             1] for i in range(len(dataframe))]
         dataframe['S3 seconds'] = pd.to_numeric(dataframe['S3 seconds'])
+        dataframe['S3_TOTAL'] = dataframe['S3 minutes']*60 + dataframe['S3 seconds']
         print("S3                          : FIXED")
 
-        dataframe[' KPH'] = dataframe[' KPH'].fillna(0.0)
+        dataframe[' KPH'] = dataframe[' KPH'].fillna(dataframe[' KPH'].median())
         print("KPH                         : FIXED")
 
         for i in range(len(dataframe)):
@@ -73,6 +76,7 @@ def clean_data(dataframe_to_clean, filename=""):
             1] for i in range(len(dataframe))]
         dataframe['ELAPSED seconds'] = pd.to_numeric(
             dataframe['ELAPSED seconds'])
+        dataframe['ELAPSED_TOTAL'] = dataframe['ELAPSED minutes']*60 + dataframe['ELAPSED seconds']
         print("ELAPSED                     : FIXED")
 
         dataframe['minutes'] = [str(dataframe.iloc[i, 14]).split(':')[
@@ -81,6 +85,7 @@ def clean_data(dataframe_to_clean, filename=""):
         dataframe['seconds'] = [str(dataframe.iloc[i, 14]).split(':')[
             1] for i in range(len(dataframe))]
         dataframe['seconds'] = pd.to_numeric(dataframe['seconds'])
+        dataframe['TIME_TOTAL'] = dataframe['minutes']*60 + dataframe['seconds']
         print("HOUR                        : FIXED")
 
         dataframe['S1_LARGE'] = dataframe['S1_LARGE'].fillna("00:00.00")
@@ -129,21 +134,22 @@ def clean_data(dataframe_to_clean, filename=""):
         for i in range(len(dataframe)):
             if ":" not in str(dataframe.iloc[i, 19]).strip():
                 dataframe.iloc[i, 19] = "00:"+str(dataframe.iloc[i, 19])
-        dataframe['PIT_TIME Large minutes'] = [str(dataframe.iloc[i, 19]).split(':')[
+        dataframe['PIT_TIME minutes'] = [str(dataframe.iloc[i, 19]).split(':')[
             0] for i in range(len(dataframe))]
-        dataframe['PIT_TIME Large minutes'] = pd.to_numeric(
-            dataframe['PIT_TIME Large minutes'])
-        dataframe['PIT_TIME Large seconds'] = [str(dataframe.iloc[i, 19]).split(':')[
+        dataframe['PIT_TIME minutes'] = pd.to_numeric(
+            dataframe['PIT_TIME minutes'])
+        dataframe['PIT_TIME seconds'] = [str(dataframe.iloc[i, 19]).split(':')[
             1] for i in range(len(dataframe))]
-        dataframe['PIT_TIME Large seconds'] = pd.to_numeric(
-            dataframe['PIT_TIME Large seconds'])
+        dataframe['PIT_TIME seconds'] = pd.to_numeric(
+            dataframe['PIT_TIME seconds'])
+        dataframe['PIT_TOTAL'] = dataframe['PIT_TIME minutes']*60 + dataframe['PIT_TIME seconds']
         print("PIT_TIME                    : FIXED")
 
         dataframe['GROUP'] = dataframe['GROUP'].fillna(0.0)
         print("GROUP                       : FIXED")
 
         dataframe['POWER'] = dataframe['POWER'].fillna(
-            dataframe['POWER'].mean())
+            dataframe['POWER'].median())
         print("POWER                       : FIXED")
         print("\nDONE : If the code works, dont touch it.\n")
 
@@ -234,4 +240,4 @@ def plot_dataset_description_with_target_distribution(dataframe, target, title="
                                      cellLoc='center',
                                      rowColours=["skyblue"]*len(data_desc),
                                      colColours=["skyblue"]*len(data_desc),
-                                     bbox=[0.0, -2.50, 1.4, 2]).auto_set_font_size(False)
+                                     bbox=[0.0, -3, 2, 2]).auto_set_font_size(False)
